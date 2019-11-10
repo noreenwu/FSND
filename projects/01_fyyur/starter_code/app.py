@@ -19,6 +19,7 @@ from forms import *
 app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://noreen@localhost:5432/fyyur'
 db = SQLAlchemy(app)
 
 # TODO: connect to a local postgresql database
@@ -39,6 +40,7 @@ class Venue(db.Model):
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
 
+
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):
@@ -56,6 +58,8 @@ class Artist(db.Model):
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+
+db.create_all()      # this creates the tables; use "" in postgres to view the tables
 
 #----------------------------------------------------------------------------#
 # Filters.
