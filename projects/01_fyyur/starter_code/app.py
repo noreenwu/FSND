@@ -14,6 +14,7 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
 from sqlalchemy import Boolean
+# from models import Genre
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -33,8 +34,19 @@ migrate = Migrate(app, db)
 shows = db.Table('shows',
     db.Column('venue_id', db.Integer, db.ForeignKey('Venue.venue_id')),
     db.Column('artist_id', db.Integer, db.ForeignKey('Artist.artist_id')),
-    db.Column('showtime', db.DateTime)
+    db.Column('start_time', db.DateTime)
 )
+
+
+# artist_genres = db.Table('artist_genres',
+#     db.Column('genre_id', db.Integer, db.ForeignKey('genre.genre_id')),
+#     db.Column('artist_id', db.Integer, db.ForeignKey('Artist.artist_id'))
+# )
+
+class Genre(db.Model):
+    genre_id = db.Column(db.Integer, primary_key=True)
+    genre_name = db.Column(db.String(24))
+
 
 class Venue(db.Model):
     __tablename__ = 'Venue'
@@ -46,6 +58,7 @@ class Venue(db.Model):
     address = db.Column(db.String(120))
     phone = db.Column(db.String(120))
     website = db.Column(db.String(120))
+    genres = db.Column(db.String(120))    
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean)
@@ -73,12 +86,12 @@ class Artist(db.Model):
     seeking_description = db.Column(db.String(120))
     past_shows_count = db.Column(db.Integer)
     upcoming_shows_count = db.Column(db.Integer)
-#    venues = db.relationship("Venue", secondary="shows")
-
+#    genres = db.relationship('genre', secondary=artist_genres, backref=db.backref('genres', lazy=True))
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+
 
 
 #Venue.artists = db.relationship("Artist", secondary="shows")
@@ -157,37 +170,8 @@ def search_venues():
 
 @app.route('/createvenues')
 def create_venue_data():
-  v1 = Venue(venue_id=1,
-             name="The Musical Hop",
-             address="1015 Folsom Street",
-             city="San Francisco",
-             state="CA",
-             phone="123-123-1234",
-             website="https://www.themusicalhop.com",
-             facebook_link="https://www.facebook.com/TheMusicalHop",
-             seeking_talent=True,
-             seeking_description="We are on the lookout for a local artist to play every two weeks. Please call us.",
-             image_link="https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
-             past_shows_count=1,
-             upcoming_shows_count=0
-             )
-
-  v2 = Venue(venue_id=2,
-             name="The Dueling Pianos Bar",
-             address="335 Delancey Street",
-             city="New York",
-             state="NY",
-             phone="914-003-1132",
-             website="https://www.theduelingpianos.com",
-             facebook_link="https://www.facebook.com/theduelingpianos",
-             seeking_talent=False,
-             image_link="https://images.unsplash.com/photo-1497032205916-ac775f0649ae?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
-             past_shows_count=0,
-             upcoming_shows_count=0)
-  db.session.add(v1)
-  db.session.add(v2)
-  db.session.commit()
   return redirect(url_for('index'))
+
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
