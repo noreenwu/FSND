@@ -31,18 +31,18 @@ migrate = Migrate(app, db)
 # Models.
 #----------------------------------------------------------------------------#
 
-shows = db.Table('shows',
-    db.Column('venue_id', db.Integer, db.ForeignKey('Venue.venue_id')),
-    db.Column('artist_id', db.Integer, db.ForeignKey('Artist.artist_id')),
-    db.Column('start_time', db.DateTime)
-)
+# shows = db.Table('shows',
+#     db.Column('venue_id', db.Integer, db.ForeignKey('Venue.venue_id')),
+#     db.Column('artist_id', db.Integer, db.ForeignKey('Artist.artist_id')),
+#     db.Column('start_time', db.DateTime)
+# )
 
-class Shows(db.Model):
-    __tablename__ = 'shows'
+class Show(db.Model):
+    __tablename__ = 'Show'
     id = db.Column(db.Integer, primary_key=True)
-    db.Column('venue_id', db.Integer, db.ForeignKey('Venue.venue_id'), primary_key=True),
-    db.Column('artist_id', db.Integer, db.ForeignKey('Artist.artist_id'), primary_key=True)
-    start_time = Column(db.DateTime)
+    venue_id = db.Column('venue_id', db.Integer, db.ForeignKey('Venue.venue_id'), primary_key=True)
+    artist_id = db.Column('artist_id', db.Integer, db.ForeignKey('Artist.artist_id'), primary_key=True)
+    start_time = db.Column(db.DateTime)
 
 # artist_genres = db.Table('artist_genres',
 #     db.Column('genre_id', db.Integer, db.ForeignKey('genre.genre_id')),
@@ -71,7 +71,7 @@ class Venue(db.Model):
     seeking_description = db.Column(db.String(120))
     past_shows_count = db.Column(db.Integer)
     upcoming_shows_count = db.Column(db.Integer)
-    artists = db.relationship('Artist', secondary=shows, backref=db.backref('artists', lazy=True))
+    artists = db.relationship('Artist', secondary=Show, backref=db.backref('artists', lazy=True))
 
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
@@ -85,6 +85,7 @@ class Artist(db.Model):
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
+    website = db.Column(db.String(120))    
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
