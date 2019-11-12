@@ -40,11 +40,13 @@ v3 = Venue(venue_id=3,
             facebook_link="https://www.facebook.com/ParkSquareLiveMusicAndCoffee",
             seeking_talent=False,
             image_link="https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80"
-)             
+)
 db.session.add(v1)
 db.session.add(v2)
 db.session.add(v3)
 db.session.commit()
 
-
-
+v1.artists.append(artist1)
+v3.artists.append(artist2)
+v3.artists.append(artist3)
+v3.artists.append(artist3)    # again with different start time

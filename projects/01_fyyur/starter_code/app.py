@@ -37,6 +37,12 @@ shows = db.Table('shows',
     db.Column('start_time', db.DateTime)
 )
 
+class Shows(db.Model):
+    __tablename__ = 'shows'
+    id = db.Column(db.Integer, primary_key=True)
+    db.Column('venue_id', db.Integer, db.ForeignKey('Venue.venue_id'), primary_key=True),
+    db.Column('artist_id', db.Integer, db.ForeignKey('Artist.artist_id'), primary_key=True)
+    start_time = Column(db.DateTime)
 
 # artist_genres = db.Table('artist_genres',
 #     db.Column('genre_id', db.Integer, db.ForeignKey('genre.genre_id')),
@@ -58,7 +64,7 @@ class Venue(db.Model):
     address = db.Column(db.String(120))
     phone = db.Column(db.String(120))
     website = db.Column(db.String(120))
-    genres = db.Column(db.String(120))    
+    genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean)
@@ -288,6 +294,8 @@ def delete_venue(venue_id):
 
 #  Artists
 #  ----------------------------------------------------------------
+
+# Person.query.with_entities(Person.name).all()
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database
