@@ -7,11 +7,11 @@ artist1 = Artist(artist_id=4,
                  city="San Francisco",
                  state="CA",
                  phone="326-123-5000",
-                 website="https://www.gunsnpetalsband.com",
+#                 website="https://www.gunsnpetalsband.com",
                  facebook_link="https://www.facebook.com/GunsNPetals",
                  seeking_venue=True,
                  seeking_description="Looking for shows to perform at in the San Francisco Bay Area!",
-                 image_link=https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
+                 image_link="https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
                  past_shows_count=1,
                  upcoming_shows_count=0,
 )
@@ -21,7 +21,7 @@ artist2 = Artist(
     name="Matt Quevedo",
     # genres=["Jazz"],
     city="New York",
-    state=NY",
+    state="NY",
     phone="300-400-5000",
     facebook_link="https://www.facebook.com/mattquevedo923251523",
     seeking_venue=False,
@@ -32,7 +32,7 @@ artist2 = Artist(
 
 artist3=Artist(
     artist_id=6,
-    artist_id="The Wild Sax Band",
+    name="The Wild Sax Band",
 #    "genres": ["Jazz", "Classical"],
     city="San Francisco",
     state="CA",
@@ -45,5 +45,5 @@ artist3=Artist(
 
 db.session.add(artist1)
 db.session.add(artist2)
-db.session.ad(artist3)
+db.session.add(artist3)
 db.session.commit()
