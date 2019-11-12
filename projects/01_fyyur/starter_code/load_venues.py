@@ -46,7 +46,7 @@ db.session.add(v2)
 db.session.add(v3)
 db.session.commit()
 
-v1.artists.append(artist1)
-v3.artists.append(artist2)
-v3.artists.append(artist3)
-v3.artists.append(artist3)    # again with different start time
+# v1.artists.append(artist1)
+# v3.artists.append(artist2)
+# v3.artists.append(artist3)
+# v3.artists.append(artist3)    # again with different start time
