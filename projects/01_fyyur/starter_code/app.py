@@ -71,7 +71,8 @@ class Venue(db.Model):
     seeking_description = db.Column(db.String(120))
     past_shows_count = db.Column(db.Integer)
     upcoming_shows_count = db.Column(db.Integer)
-    artists = db.relationship('Artist', secondary=Show, backref=db.backref('artists', lazy=True))
+#    artists = db.relationship('Show', backref='artists',
+#                              primaryjoin=artist_id == Show.artist_id )
 
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
