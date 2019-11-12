@@ -1,7 +1,7 @@
 from app import *
 
 
-artist1 = Artist(artist_id=4,
+artist1 = Artist(id=4,
                  name="Guns N Petals",
  #   "genres": ["Rock n Roll"],
                  city="San Francisco",
@@ -17,7 +17,7 @@ artist1 = Artist(artist_id=4,
 )
 
 artist2 = Artist(
-    artist_id=5,
+    id=5,
     name="Matt Quevedo",
     # genres=["Jazz"],
     city="New York",
@@ -31,7 +31,7 @@ artist2 = Artist(
 )
 
 artist3=Artist(
-    artist_id=6,
+    id=6,
     name="The Wild Sax Band",
 #    "genres": ["Jazz", "Classical"],
     city="San Francisco",

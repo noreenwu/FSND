@@ -41,7 +41,7 @@ class Show(db.Model):
     __tablename__ = 'Show'
     id = db.Column(db.Integer, primary_key=True)
     venue_id = db.Column('venue_id', db.Integer, db.ForeignKey('Venue.venue_id'), primary_key=True)
-    artist_id = db.Column('artist_id', db.Integer, db.ForeignKey('Artist.artist_id'), primary_key=True)
+    artist_id = db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), primary_key=True)
     start_time = db.Column(db.DateTime)
 
 # artist_genres = db.Table('artist_genres',
@@ -81,7 +81,7 @@ class Venue(db.Model):
 class Artist(db.Model):
     __tablename__ = 'Artist'
 
-    artist_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
@@ -297,20 +297,11 @@ def delete_venue(venue_id):
 #  Artists
 #  ----------------------------------------------------------------
 
-# Person.query.with_entities(Person.name).all()
+# Artist.query.with_entities(Artist.id,Artist.name).all()
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database
-  data=[{
-    "id": 4,
-    "name": "Guns N Petals",
-  }, {
-    "id": 5,
-    "name": "Matt Quevedo",
-  }, {
-    "id": 6,
-    "name": "The Wild Sax Band",
-  }]
+  data=Artist.query.with_entities(Artist.id,Artist.name).all()
   return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
