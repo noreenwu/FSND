@@ -57,6 +57,11 @@ artist_genre = db.Table('artist_genre',
     db.Column('artist_id', db.Integer, db.ForeignKey('Artist.artist_id'))
 )
 
+location_venue = db.Table('location_venue',
+    db.Column('location_id', db.Integer, db.ForeignKey('Location.location_id')),
+    db.Column('venue_id', db.Integer, db.ForeignKey('Venue.venue_id'))
+)
+
 class Show(db.Model):
     __tablename__ = 'Show'
     show_id = db.Column(db.Integer, primary_key=True)
@@ -92,3 +97,12 @@ class Genre(db.Model):
     genre_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
 
+
+class Location(db.Model):
+    __tablename__ = 'Location'
+    location_id = db.Column(db.Integer, primary_key=True)
+    city = db.Column(db.String(20))
+    state = db.Column(db.String(20))
+    venues = db.relationship('Venue', secondary=location_venue, backref=db.backref('location'))
+
+    
