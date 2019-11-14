@@ -28,33 +28,64 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 
-
-from appmany import *
-
-artist1 = Artist(name="Guns N Petals")           # add artist records
-db.session.add(artist1)
-
-artist2 = Artist(name="Matt Q")
-db.session.add(artist2)
+from relationships import *
 
 
-venue1 = Venue(name="The Dueling Pianos Bar")              # add venue records
-db.session.add(venue1)
+# db.session.query(Artist).delete()          # delete all Artist records
 
-venue2 = Venue(name="Park Square Live Coffee Bar")
-db.session.add(venue2)
+# db.session.query(Venue).delete()           # delete all Venue records
 
+# db.session.query(Genre).delete()           # delete all Genre records
 
-db.session.query(Show).delete()             # delete all Show records
+# db.session.query(Show).delete()            # delete all Show records
 
-show1 = Show(start_time="2004-12-28 12:00:00")                 # add show records
-db.session.add(show1)
+# db.session.query(Location).delete()        # delete all Location records
 
-show2 = Show(start_time="2008-12-12 04:00:00")
-db.session.add (show2)
+# db.session.commit()
 
-show3 = Show(start_time="2012-01-01 05:00:22")
-db.session.add(show3)
+# delete Venues
 
+venues = Venue.query.all()
+
+for v in venues:
+    db.session.delete(v)
 
 db.session.commit()
+
+
+# delete Artists
+
+artists = Artist.query.all()
+
+for a in artists:
+    db.session.delete(a)
+
+db.session.commit()
+
+
+# delete Shows
+
+shows = Show.query.all()
+
+for s in shows:
+    db.session.delete(s)
+
+db.session.commit()
+
+
+# delete Genres
+
+genres = Genre.query.all()
+
+for g in genres:
+    db.session.delete(g)
+
+db.session.commit()
+
+
+locations = Location.query.all()
+
+for l in locations:
+    db.session.delete(l)
+
+db.session.commit()    

@@ -2,7 +2,7 @@ from app import *
 
 
 
-v1 = Venue(venue_id=1,
+v1 = Venue(id=1,
             name="The Musical Hop",
             address="1015 Folsom Street",
             city="San Francisco",
@@ -17,7 +17,7 @@ v1 = Venue(venue_id=1,
             upcoming_shows_count=0
             )
 
-v2 = Venue(venue_id=2,
+v2 = Venue(id=2,
             name="The Dueling Pianos Bar",
             address="335 Delancey Street",
             city="New York",
@@ -30,7 +30,7 @@ v2 = Venue(venue_id=2,
             past_shows_count=0,
             upcoming_shows_count=0)
 
-v3 = Venue(venue_id=3,
+v3 = Venue(id=3,
             name="Park Square Live Music & Coffee",
             address="34 Whiskey Moore Ave",
             city="San Francisco",
