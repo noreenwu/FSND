@@ -38,10 +38,10 @@ artist_venue = db.Table('artist_venue',
 )
 
 
-# artist_genre = db.Table('artist_genre',
-#     db.Column('genre_id', db.Integer, db.ForeignKey('Genre.genre_id')),
-#     db.Column('artist_id', db.Integer, db.ForeignKey('Artist.artist_id'))
-# )
+artist_genre = db.Table('artist_genre',
+     db.Column('genre_id', db.Integer, db.ForeignKey('Genre.genre_id')),
+     db.Column('artist_id', db.Integer, db.ForeignKey('Artist.artist_id'))
+)
 
 
 class Show(db.Model):
@@ -50,15 +50,16 @@ class Show(db.Model):
     start_time = db.Column('start_time', db.DateTime)
     artist_id = db.Column(db.Integer, db.ForeignKey('Artist.artist_id'))
     venue_id = db.Column(db.Integer, db.ForeignKey('Venue.venue_id'))
-
+    # backref artist 
+    # backref venue 
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
     artist_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
     shows = db.relationship('Show', backref=db.backref('artist'), lazy=True)
-    # venues = db.relationship('Venue', secondary=artist_venue, backref=db.backref('artists'))
-    # genres = db.relationship('Genre', secondary=artist_genre, backref=db.backref('artists'))
+    venues = db.relationship('Venue', secondary=artist_venue, backref=db.backref('artists'))
+    genres = db.relationship('Genre', secondary=artist_genre, backref=db.backref('artists'))
 
 
 class Venue(db.Model):
@@ -67,14 +68,14 @@ class Venue(db.Model):
     name = db.Column(db.String(30))
     location_id = db.Column(db.Integer, db.ForeignKey('Location.location_id'))
     shows = db.relationship('Show', backref=db.backref('venue', lazy=True))
-#    shows = db.relationship('Show', secondary=venue_show, backref=db.backref('venue'))
-
+    # backref artists
+    # backref location
 
 class Genre(db.Model):
     __tablename__ = 'Genre'
     genre_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
-
+    # backref artists
 
 class Location(db.Model):
     __tablename__ = 'Location'
@@ -82,6 +83,6 @@ class Location(db.Model):
     city = db.Column(db.String(20))
     state = db.Column(db.String(20))
     venues = db.relationship('Venue', backref=db.backref('location'), lazy=True)
- #   venues = db.relationship('Venue', secondary=location_venue, backref=db.backref('location'))
+
 
     
