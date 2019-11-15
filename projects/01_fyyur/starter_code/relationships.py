@@ -135,7 +135,7 @@ db.session.commit()
 
 
 artist1 = Artist(name="Guns N Petals")
-artist2 = Artist(name="Pamela G")
+artist2 = Artist(name="Matt Quevedo")
 artist3 = Artist(name="The Wild Sax Band")
 
 db.session.add(artist1)
@@ -155,16 +155,6 @@ db.session.add(venueNY)
 
 db.session.commit()
 
-show1 = Show(start_time="2019-09-15 20:00:00")
-show2 = Show(start_time="2018-08-08 19:00:00")
-show3 = Show(start_time="2019-12-12 21:00:00")
-
-db.session.add(show1)
-db.session.add(show2)
-db.session.add(show3)
-
-db.session.commit()
-
 location1 = Location(city="New York", state="NY")
 location2 = Location(city="San Francisco", state="CA")
 
@@ -172,12 +162,19 @@ db.session.add(location1)
 db.session.add(location2)
 
 
-genre1 = Genre(name="Rock")
-genre2 = Genre(name="Reggae")
+genre1 = Genre(name="Rock n Roll")
+genre2 = Genre(name="Jazz")
+genre3 = Genre(name="Classical")
+genre4 = Genre(name="Reggae")
+genre5 = Genre(name="Swing")
+genre6 = Genre(name="Folk")
 
 db.session.add(genre1)
 db.session.add(genre2)
-
+db.session.add(genre3)
+db.session.add(genre4)
+db.session.add(genre5)
+db.session.add(genre6)
 db.session.commit()
 
 
@@ -222,9 +219,11 @@ db.session.commit()
 # query for Guns N Petals
 
 artistGun = Artist.query.filter_by(name="Guns N Petals").first()
+rocknroll = Genre.query.filter_by(name="Rock n Roll").first()
 
 if artistGun is not None:
     artistGun.shows.append(show1)
+    artistGun.genres.append(rocknroll)
 
 db.session.commit()
 
