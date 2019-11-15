@@ -28,7 +28,30 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 
-from app import Venue
+class Location(db.Model):
+    __tablename__ = 'Location'
+    location_id = db.Column(db.Integer, primary_key=True)
+    city = db.Column(db.String(20))
+    state = db.Column(db.String(20))
+    venues = db.relationship('Venue', backref=db.backref('location'), lazy=True)
+
+
+class Venue(db.Model):
+    __tablename__ = 'Venue'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    city = db.Column(db.String(120))
+    state = db.Column(db.String(120))
+    address = db.Column(db.String(120))
+    phone = db.Column(db.String(120))
+    image_link = db.Column(db.String(500))
+    facebook_link = db.Column(db.String(120))
+    website = db.Column(db.String(120))   # new
+    seeking_talent = db.Column(db.String(120))  # new
+    seeking_description = db.Column(db.String(120)) # new 
+    location_id = db.Column(db.Integer, db.ForeignKey('Location.location_id'))
+
 
 # delete Venues
 
@@ -40,14 +63,31 @@ for v in venues:
 db.session.commit()
 
 
-# # delete Artists
 
-# artists = Artist.query.all()
+class Artist(db.Model):
+    __tablename__ = 'Artist'
 
-# for a in artists:
-#     db.session.delete(a)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    city = db.Column(db.String(120))
+    state = db.Column(db.String(120))
+    phone = db.Column(db.String(120))
+    genres = db.Column(db.String(120))
+    image_link = db.Column(db.String(500))
+    facebook_link = db.Column(db.String(120))
+    website = db.Column(db.String(120))   # new
+    seeking_venue = db.Column(db.String(120)) # new
+    seeking_description = db.Column(db.String(120))  # new
 
-# db.session.commit()
+
+# delete Artists
+
+artists = Artist.query.all()
+
+for a in artists:
+    db.session.delete(a)
+
+db.session.commit()
 
 
 # # delete Shows
@@ -70,23 +110,46 @@ db.session.commit()
 # db.session.commit()
 
 
-# locations = Location.query.all()
-
-# for l in locations:
-#     db.session.delete(l)
-
-# db.session.commit()    
 
 
-# artist1 = Artist(name="Guns N Petals")
-# artist2 = Artist(name="Matt Quevedo")
-# artist3 = Artist(name="The Wild Sax Band")
 
-# db.session.add(artist1)
-# db.session.add(artist2)
-# db.session.add(artist3)
+artist1 = Artist(name="Guns N Petals",
+    city="San Francisco",
+    state="CA",
+    phone="326-123-5000",
+    website="https://www.gunsnpetalsband.com",
+    facebook_link="https://www.facebook.com/GunsNPetals",
+    seeking_venue=True,
+    seeking_description="Looking for shows to perform at in the San Francisco Bay Area!",
+    image_link="https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",    
+)
 
-# db.session.commit()
+artist2 = Artist(name="Matt Quevedo",
+                 id=5,
+                 city="New York",
+                 state="NY",
+                 phone="300-400-5000",
+                 # no website
+                 facebook_link="https://www.facebook.com/mattquevedo923251523",
+                 seeking_venue=False,
+                 image_link="https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80"
+)                 
+
+
+artist3 = Artist(name="The Wild Sax Band",
+                 city="San Francisco",
+                 state="CA",
+                 phone="432-325-5432",
+                 seeking_venue=False,
+                 image_link="https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80"
+)
+
+
+db.session.add(artist1)
+db.session.add(artist2)
+db.session.add(artist3)
+
+db.session.commit()
 
 
 venue1 = Venue(name="The Musical Hop",
@@ -100,13 +163,28 @@ venue1 = Venue(name="The Musical Hop",
                seeking_description="We are on the lookout for a local artist to play every two weeks. Please call us.",
                image_link="https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
 )
-venue2 = Venue(name="Park Square Live Music & Coffee"
-
-
+venue2 = Venue(name="Park Square Live Music & Coffee",
+               address="34 Whiskey Moore Ave",
+               city="San Francisco",
+               state="CA",
+               phone="415-000-1234",
+               website="https://www.parksquarelivemusicandcoffee.com",
+               facebook_link="https://www.facebook.com/ParkSquareLiveMusicAndCoffee",
+               seeking_talent=False,
+               image_link="https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80",
 )
 
 
-venueNY = Venue(name="The Dueling Piano Bar")
+venueNY = Venue(name="The Dueling Pianos Bar",
+                address="335 Delancey Street",
+                city="New York",
+                state="NY",
+                phone="914-003-1132",
+                website="https://www.theduelingpianos.com",
+                facebook_link="https://www.facebook.com/theduelingpianos",
+                seeking_talent=False,
+                image_link="https://images.unsplash.com/photo-1497032205916-ac775f0649ae?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
+)
 
 db.session.add(venue1)
 db.session.add(venue2)
@@ -114,11 +192,41 @@ db.session.add(venueNY)
 
 db.session.commit()
 
-# location1 = Location(city="New York", state="NY")
-# location2 = Location(city="San Francisco", state="CA")
 
-# db.session.add(location1)
-# db.session.add(location2)
+locations = Location.query.all()
+
+for l in locations:
+    db.session.delete(l)
+
+db.session.commit()    
+
+location1 = Location(city="New York", state="NY")
+location2 = Location(city="San Francisco", state="CA")
+
+db.session.add(location1)
+db.session.add(location2)
+
+db.session.commit()
+
+
+
+# # add venues to Location
+
+locationSF = Location.query.filter_by(city="San Francisco").first()
+
+if locationSF is not None:
+    locationSF.venues.append(venue1)
+    locationSF.venues.append(venue2)
+
+
+db.session.commit()
+
+locationNY = Location.query.filter_by(city="New York").first()
+
+if locationNY is not None:
+    locationNY.venues.append(venueNY)
+
+db.session.commit()
 
 
 # genre1 = Genre(name="Rock n Roll")
@@ -148,23 +256,6 @@ db.session.commit()
 
 
 
-# # add venues to SF Location
-
-# locationSF = Location.query.filter_by(city="San Francisco").first()
-
-# if locationSF is not None:
-#     locationSF.venues.append(venue1)
-#     locationSF.venues.append(venue2)
-
-
-# db.session.commit()
-
-# locationNY = Location.query.filter_by(city="New York").first()
-
-# if locationNY is not None:
-#     locationNY.venues.append(venueNY)
-
-# db.session.commit()
 
 
 
