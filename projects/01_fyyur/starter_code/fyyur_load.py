@@ -36,6 +36,22 @@ class Location(db.Model):
     venues = db.relationship('Venue', backref=db.backref('location'), lazy=True)
 
 
+class Artist(db.Model):
+    __tablename__ = 'Artist'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    city = db.Column(db.String(120))
+    state = db.Column(db.String(120))
+    phone = db.Column(db.String(120))
+    genres = db.Column(db.String(120))
+    image_link = db.Column(db.String(500))
+    facebook_link = db.Column(db.String(120))
+    website = db.Column(db.String(120))   # new
+    seeking_venue = db.Column(db.String(120)) # new
+    seeking_description = db.Column(db.String(120))  # new
+    shows = db.relationship('Show', backref=db.backref('artist'), lazy=True)
+
 
 class Show(db.Model):
     __tablename__ = 'Show'
@@ -75,21 +91,7 @@ db.session.commit()
 
 
 
-class Artist(db.Model):
-    __tablename__ = 'Artist'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
-    website = db.Column(db.String(120))   # new
-    seeking_venue = db.Column(db.String(120)) # new
-    seeking_description = db.Column(db.String(120))  # new
-    shows = db.relationship('Show', backref=db.backref('artist'), lazy=True)
 
 # delete Artists
 
@@ -260,9 +262,6 @@ db.session.commit()
 
 
 
-
-
-
 # # delete Shows
 
 shows = Show.query.all()
@@ -291,24 +290,68 @@ if artistGun is not None:
 db.session.commit()
 
 
-sax1 = Show(start_time="2035-04-01T20:00:00.000Z")
-sax2 = Show(start_time="2035-04-08T20:00:00.000Z")
-sax3 = Show(start_time="2035-04-15T20:00:00.000Z")
+show_sax1 = Show(start_time="2035-04-01T20:00:00.000Z")
+show_sax2 = Show(start_time="2035-04-08T20:00:00.000Z")
+show_sax3 = Show(start_time="2035-04-15T20:00:00.000Z")
 
-db.session.add(sax1)
-db.session.add(sax2)
-db.session.add(sax3)
+db.session.add(show_sax1)
+db.session.add(show_sax2)
+db.session.add(show_sax3)
 
 db.session.commit()
 
 artistSax = Artist.query.filter_by(name="The Wild Sax Band").first()
 
 if artistSax is not None:
-    artistSax.shows.append(sax1)
-    artistSax.shows.append(sax2)
-    artistSax.shows.append(sax3)
+    artistSax.shows.append(show_sax1)
+    artistSax.shows.append(show_sax2)
+    artistSax.shows.append(show_sax3)
 
 db.session.commit()
+
+
+#  associate shows to venues
+
+musical_hop = Venue.query.filter_by(name="The Musical Hop").first()
+
+if musical_hop is not None:
+    musical_hop.shows.append(show1)
+
+music_and_coffee = Venue.query.filter_by(name="Park Square Live Music & Coffee").first()
+show_mc = Show(start_time="2019-06-15T23:00:00.000Z")
+show_mc2 = Show(start_time="2035-04-01T20:00:00.000Z")
+show_mc3 = Show(start_time="2035-04-01T20:00:00.000Z")
+
+# db.session.add(show_mc)
+# db.session.add(show_mc2)
+
+if music_and_coffee is not None:
+    music_and_coffee.shows.append(show_mc)
+    music_and_coffee.shows.append(show_mc2)
+    music_and_coffee.shows.append(show_mc3)
+
+
+
+# second show (artist -> Show)
+
+artist_quevedo = Artist.query.filter_by(name="Matt Quevedo").first()
+
+if artist_quevedo is not None:
+    artist_quevedo.shows.append(show_mc)
+
+
+
+db.session.commit()    
+
+shows = Show.query.all()
+
+for s in shows:
+    s.start_time
+    if s.venue is not None:
+        "venue ", s.venue.name
+    if s.artist is not None:
+        "artist ", s.artist.name
+
 
 
 # Default port:
