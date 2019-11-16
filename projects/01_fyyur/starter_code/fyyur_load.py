@@ -272,9 +272,11 @@ for s in shows:
 db.session.commit()
 
 
-show1 = Show(start_time="2019-05-21T21:30:00.000Z")
+### shows to artists
 
-db.session.add(show1)
+show_hop = Show(start_time="2019-05-21T21:30:00.000Z")
+
+db.session.add(show_hop)
 
 db.session.commit()
 
@@ -284,21 +286,33 @@ artistGun = Artist.query.filter_by(name="Guns N Petals").first()
 # rocknroll = Genre.query.filter_by(name="Rock n Roll").first()
 
 if artistGun is not None:
-    artistGun.shows.append(show1)
+    artistGun.shows.append(show_hop)
     # artistGun.genres.append(rocknroll)
 
 db.session.commit()
 
 
+
+show_sax2019 = Show(start_time="2019-06-15T23:00:00.000Z")
 show_sax1 = Show(start_time="2035-04-01T20:00:00.000Z")
 show_sax2 = Show(start_time="2035-04-08T20:00:00.000Z")
 show_sax3 = Show(start_time="2035-04-15T20:00:00.000Z")
 
+db.session.add(show_sax2019)
 db.session.add(show_sax1)
 db.session.add(show_sax2)
 db.session.add(show_sax3)
 
 db.session.commit()
+
+
+
+# second show (artist -> Show)
+
+artist_quevedo = Artist.query.filter_by(name="Matt Quevedo").first()
+
+if artist_quevedo is not None:
+    artist_quevedo.shows.append(show_sax2019)
 
 artistSax = Artist.query.filter_by(name="The Wild Sax Band").first()
 
@@ -315,43 +329,75 @@ db.session.commit()
 musical_hop = Venue.query.filter_by(name="The Musical Hop").first()
 
 if musical_hop is not None:
-    musical_hop.shows.append(show1)
+    musical_hop.shows.append(show_hop)
 
-music_and_coffee = Venue.query.filter_by(name="Park Square Live Music & Coffee").first()
-show_mc = Show(start_time="2019-06-15T23:00:00.000Z")
-show_mc2 = Show(start_time="2035-04-01T20:00:00.000Z")
-show_mc3 = Show(start_time="2035-04-01T20:00:00.000Z")
+ven_music_and_coffee = Venue.query.filter_by(name="Park Square Live Music & Coffee").first()
+# show_mc = Show(start_time="2019-06-15T23:00:00.000Z")
+# show_mc2 = Show(start_time="2035-04-01T20:00:00.000Z")  
+# show_mc3 = Show(start_time="2035-04-08T20:00:00.000Z")
+# show_mc4 = Show(start_time="2035-04-15T20:00:00.000Z")
 
 # db.session.add(show_mc)
 # db.session.add(show_mc2)
 
-if music_and_coffee is not None:
-    music_and_coffee.shows.append(show_mc)
-    music_and_coffee.shows.append(show_mc2)
-    music_and_coffee.shows.append(show_mc3)
-
-
-
-# second show (artist -> Show)
-
-artist_quevedo = Artist.query.filter_by(name="Matt Quevedo").first()
-
-if artist_quevedo is not None:
-    artist_quevedo.shows.append(show_mc)
+if ven_music_and_coffee is not None:
+    ven_music_and_coffee.shows.append(show_sax2019)
+    ven_music_and_coffee.shows.append(show_sax1)
+    ven_music_and_coffee.shows.append(show_sax2)
+    ven_music_and_coffee.shows.append(show_sax3)
 
 
 
 db.session.commit()    
 
+
 shows = Show.query.all()
 
-for s in shows:
-    s.start_time
-    if s.venue is not None:
-        "venue ", s.venue.name
-    if s.artist is not None:
-        "artist ", s.artist.name
 
+# class Show_Info(object):
+#     start_time = ""
+#     venue_id = 0
+#     venue_name = ""
+#     artist_id = 0
+#     artist_name = ""
+#     artist_image = ""
+
+#     def __init__(self, start_time, venue_id, venue_name, artist_id, artist_name, artist_image):
+#         self.start_time = start_time
+#         self.venue_id = venue_id
+#         self.venue_name = venue_name
+#         self.artist_id = artist_id
+#         self.artist_name = artist_name
+#         self.artist_image = artist_image
+
+d = []
+for s in shows:
+    ss = {}
+    if s.venue is not None:
+        if s.artist is not None:
+            x = s.start_time
+            ss['start_time'] = x.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+            ss['venue_id'] = s.venue_id
+            ss['artist_id'] = s.artist_id
+            ss['artist_name'] = s.artist.name
+            ss['artist_image_link'] = s.artist.image_link
+            d.append(ss)
+
+
+            # s_info = Show_Info(s.start_time, s.venue_id, s.venue.name, s.artist_id, s.artist.name, s.artist.image_link)
+            # s_info
+            # d.append(s_info)
+    # if s.venue is not None:
+    #     'venue_id', s.venue_id
+    #     "venue_name", s.venue.name
+    # if s.artist is not None:
+    #     "artist_id", s.artist_id
+    #     "artist_name", s.artist.name
+    #     "artist_image", s.artist.image_link
+
+    
+
+print (d)
 
 
 # Default port:
