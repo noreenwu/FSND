@@ -36,6 +36,16 @@ class Location(db.Model):
     venues = db.relationship('Venue', backref=db.backref('location'), lazy=True)
 
 
+
+class Show(db.Model):
+    __tablename__ = 'Show'
+    show_id = db.Column(db.Integer, primary_key=True)    
+    start_time = db.Column('start_time', db.DateTime)
+    artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
+    venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'))
+    # backref artist 
+    # backref venue 
+
 class Venue(db.Model):
     __tablename__ = 'Venue'
 
@@ -51,6 +61,7 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.String(120))  # new
     seeking_description = db.Column(db.String(120)) # new 
     location_id = db.Column(db.Integer, db.ForeignKey('Location.location_id'))
+    shows = db.relationship('Show', backref=db.backref('venue', lazy=True))
 
 
 # delete Venues
@@ -78,7 +89,7 @@ class Artist(db.Model):
     website = db.Column(db.String(120))   # new
     seeking_venue = db.Column(db.String(120)) # new
     seeking_description = db.Column(db.String(120))  # new
-
+    shows = db.relationship('Show', backref=db.backref('artist'), lazy=True)
 
 # delete Artists
 
@@ -90,14 +101,7 @@ for a in artists:
 db.session.commit()
 
 
-# # delete Shows
 
-# shows = Show.query.all()
-
-# for s in shows:
-#     db.session.delete(s)
-
-# db.session.commit()
 
 
 # # delete Genres
@@ -259,43 +263,52 @@ db.session.commit()
 
 
 
-# # show
-# show1 = Show(start_time="2019-05-21T21:30:00.000Z")
+# # delete Shows
 
-# db.session.add(show1)
+shows = Show.query.all()
 
-# db.session.commit()
+for s in shows:
+    db.session.delete(s)
 
-# # query for Guns N Petals
+db.session.commit()
 
-# artistGun = Artist.query.filter_by(name="Guns N Petals").first()
+
+show1 = Show(start_time="2019-05-21T21:30:00.000Z")
+
+db.session.add(show1)
+
+db.session.commit()
+
+# query for Guns N Petals
+
+artistGun = Artist.query.filter_by(name="Guns N Petals").first()
 # rocknroll = Genre.query.filter_by(name="Rock n Roll").first()
 
-# if artistGun is not None:
-#     artistGun.shows.append(show1)
-#     artistGun.genres.append(rocknroll)
+if artistGun is not None:
+    artistGun.shows.append(show1)
+    # artistGun.genres.append(rocknroll)
 
-# db.session.commit()
+db.session.commit()
 
 
-# sax1 = Show(start_time="2035-04-01T20:00:00.000Z")
-# sax2 = Show(start_time="2035-04-08T20:00:00.000Z")
-# sax3 = Show(start_time="2035-04-15T20:00:00.000Z")
+sax1 = Show(start_time="2035-04-01T20:00:00.000Z")
+sax2 = Show(start_time="2035-04-08T20:00:00.000Z")
+sax3 = Show(start_time="2035-04-15T20:00:00.000Z")
 
-# db.session.add(sax1)
-# db.session.add(sax2)
-# db.session.add(sax3)
+db.session.add(sax1)
+db.session.add(sax2)
+db.session.add(sax3)
 
-# db.session.commit()
+db.session.commit()
 
-# artistSax = Artist.query.filter_by(name="The Wild Sax Band").first()
+artistSax = Artist.query.filter_by(name="The Wild Sax Band").first()
 
-# if artistSax is not None:
-#     artistSax.shows.append(sax1)
-#     artistSax.shows.append(sax2)
-#     artistSax.shows.append(sax3)
+if artistSax is not None:
+    artistSax.shows.append(sax1)
+    artistSax.shows.append(sax2)
+    artistSax.shows.append(sax3)
 
-# db.session.commit()
+db.session.commit()
 
 
 # Default port:

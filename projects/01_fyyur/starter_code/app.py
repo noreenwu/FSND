@@ -51,6 +51,7 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.String(120))  # new
     seeking_description = db.Column(db.String(120)) # new 
     location_id = db.Column(db.Integer, db.ForeignKey('Location.location_id'))
+    shows = db.relationship('Show', backref=db.backref('venue', lazy=True))
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -68,12 +69,23 @@ class Artist(db.Model):
     website = db.Column(db.String(120))   # new
     seeking_venue = db.Column(db.String(120)) # new
     seeking_description = db.Column(db.String(120))  # new
+    shows = db.relationship('Show', backref=db.backref('artist'), lazy=True)
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+
+class Show(db.Model):
+    __tablename__ = 'Show'
+    show_id = db.Column(db.Integer, primary_key=True)    
+    start_time = db.Column('start_time', db.DateTime)
+    artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
+    venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'))
+    # backref artist 
+    # backref venue 
+
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -278,21 +290,21 @@ def delete_venue(venue_id):
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database
-  # artists = Artist.query.all()
-  # data = []
-  # for a in artists:
-  #     data.append({'id': a.artist_id, 'name': a.artist_name})
+  artists = Artist.query.all()
+  data = []
+  for a in artists:
+      data.append({'id': a.id, 'name': a.name})
 
-  data=[{
-    "id": 4,
-    "name": "Guns N Petals",
-  }, {
-    "id": 5,
-    "name": "Matt Quevedo",
-  }, {
-    "id": 6,
-    "name": "The Wild Sax Band",
-  }]
+  # data=[{
+  #   "id": 4,
+  #   "name": "Guns N Petals",
+  # }, {
+  #   "id": 5,
+  #   "name": "Matt Quevedo",
+  # }, {
+  #   "id": 6,
+  #   "name": "The Wild Sax Band",
+  # }]
   return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
@@ -312,10 +324,23 @@ def search_artists():
 
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
-  # shows the venue page with the given venue_id
-  # TODO: replace with real venue data from the venues table, using venue_id
+  # shows the artist page with the given artist_id
+  # TODO: replace with real venue data from the artist table, using artist_id
+
+  # data1 = Artist.query.filter_by(id=16)
+
+  # data.past_shows = [{
+  #     "venue_id": 1,
+  #     "venue_name": "The Musical Hop",
+  #     "venue_image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
+  #     "start_time": "2019-05-21T21:30:00.000Z"
+  # }]
+  # data.upcoming_shows = []
+  # data.past_shows_count: 1
+  # data.upcoming_shows_count: 0
+
   data1={
-    "id": 4,
+    "id": 16,
     "name": "Guns N Petals",
     "genres": ["Rock n Roll"],
     "city": "San Francisco",
@@ -357,7 +382,7 @@ def show_artist(artist_id):
     "upcoming_shows_count": 0,
   }
   data3={
-    "id": 6,
+    "id": 17,
     "name": "The Wild Sax Band",
     "genres": ["Jazz", "Classical"],
     "city": "San Francisco",
