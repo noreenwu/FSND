@@ -14,7 +14,7 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
 from sqlalchemy import Boolean
-
+from datetime import datetime
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -398,6 +398,13 @@ for s in shows:
     
 
 print (d)
+
+
+# time comparison
+
+for s in shows:
+    if s.start_time > datetime.now():
+       s.start_time
 
 
 # Default port:

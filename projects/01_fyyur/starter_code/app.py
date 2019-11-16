@@ -13,6 +13,8 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
+from datetime import datetime
+
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -346,15 +348,39 @@ def show_artist(artist_id):
     'image_link': the_artist.image_link,
   }
 
+  artist_shows = the_artist.shows
+  upcoming_shows = []
+  past_shows = []
+  present = datetime.now()
+
+  for s in artist_shows:
+    if s.start_time > present:
+        upcoming_shows.append(s)
+    else:
+        past_shows.append(s)
+
+  data['past_shows'] = past_shows
+
+
+  data['upcoming_shows'] = []  
+  for cs in upcoming_shows:
+     cs_obj = { 'venue_id': cs.venue_id,
+                'venue_name': cs.venue.name,
+                'venue_image_link': cs.venue.image_link,
+                'start_time': cs.start_time.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+              }
+     data['upcoming_shows'].append(cs_obj)
+
+  data['past_shows_count'] = len(past_shows)
+  data['upcoming_shows_count'] = len(upcoming_shows)
+
+  # data['upcoming_shows'] =[]
   data['past_shows'] = [{
       "venue_id": 1,
       "venue_name": "The Musical Hop",
       "venue_image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
       "start_time": "2019-05-21T21:30:00.000Z"
   }]
-  data['upcoming_shows'] = []
-  data['past_shows_count'] = 1
-  data['upcoming_shows_count'] = 0
 
   # data1={
   #   "id": 16,
