@@ -177,6 +177,16 @@ def sort_shows(shows):
 
   return past_shows, upcoming_shows        
 
+#----------------------------------------------------------------------------#
+#  Given Array of Shows Return Number of Upcoming Shows
+#----------------------------------------------------------------------------#
+def num_upcoming_shows(shows):
+  present = datetime.now()
+
+  past_shows, upcoming_shows = sort_shows(shows)
+
+  return len(upcoming_shows)
+
 
 #----------------------------------------------------------------------------#
 # Controllers.
@@ -413,14 +423,34 @@ def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # search for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
+
+  search_term = request.form['search_term']
+  search_term_lower = search_term.lower()
+
+  search_term_lower = '%' + search_term_lower + '%'
+  artist_matches = Artist.query.filter(Artist.name.ilike(search_term_lower)).all()
+  data = []
+  count = len(artist_matches)
+  for a in artist_matches:
+     a_obj = {
+       'id': a.id,
+       'name': a.name,
+       'num_upcoming_shows': num_upcoming_shows(a.shows)
+     }
+     data.append(a_obj)
+  
   response={
-    "count": 1,
-    "data": [{
-      "id": 4,
-      "name": "Guns N Petals",
-      "num_upcoming_shows": 0,
-    }]
+     'count': count,
+     'data': data
   }
+  # response={
+  #   "count": 1,
+  #   "data": [{
+  #     "id": 1,
+  #     "name": "Guns N Petals",
+  #     "num_upcoming_shows": 0,
+  #   }]
+  # }
   return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/artists/<int:artist_id>')
