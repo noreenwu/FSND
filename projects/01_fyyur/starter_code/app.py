@@ -428,8 +428,6 @@ def create_venue_submission():
 
   genres = get_genre_from_db(request.form.getlist('genres'))
 
-  logging.warning("select multiple ", genres)
-
   location = Location.query.filter_by(city=request.form['city'], state=request.form['state'] ).first()
 
       
@@ -439,6 +437,7 @@ def create_venue_submission():
                     address = request.form['address'],
                     phone = request.form['phone'],
                     #image_link = 'https://unsplash.com/photos/MTO5SmPraX4'
+                    facebook_link = request.form['facebook_link'],
                     image_link = 'http://westsideparentsource.org/open/oleg-kuzmin-kTA1roYnTjY-unsplash.jpg',
                     genres = genres
   )
@@ -447,7 +446,6 @@ def create_venue_submission():
 
   if location is None:
     # insert new location into db
-    logging.warning("location is None, creating new one")
     new_location = Location(city=request.form['city'],
                             state=request.form['state'],
                             venues=[ new_venue ] 
@@ -725,6 +723,8 @@ def edit_venue_submission(venue_id):
 @app.route('/artists/create', methods=['GET'])
 def create_artist_form():
   form = ArtistForm()
+
+
   return render_template('forms/new_artist.html', form=form)
 
 @app.route('/artists/create', methods=['POST'])
@@ -732,6 +732,20 @@ def create_artist_submission():
   # called upon submitting the new artist listing form
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
+
+  genres = get_genre_from_db(request.form.getlist('genres'))
+
+  new_artist = Artist(name=request.form['name'],
+                      city=request.form['city'],
+                      state=request.form['state'],
+                      phone=request.form['phone'],
+                      facebook_link=request.form['facebook_link'],
+                      image_link = 'http://westsideparentsource.org/open/oleg-kuzmin-kTA1roYnTjY-unsplash.jpg',
+                      genres=genres
+                      )
+
+  db.session.add(new_artist)                      
+  db.session.commit()
 
   # on successful db insert, flash success
   flash('Artist ' + request.form['name'] + ' was successfully listed!')
@@ -814,6 +828,25 @@ def create_shows():
 def create_show_submission():
   # called to create new shows in the db, upon submitting new show listing form
   # TODO: insert form data as a new Show record in the db, instead
+
+  artist = Artist.query.filter_by(id=request.form['artist_id']).first()
+  venue = Venue.query.filter_by(id=request.form['venue_id']).first()
+
+  if artist is None:
+    return render_template('errors/500-invalid-id.html'), 500
+
+  if venue is None:
+    return render_template('errors/500-invalid-id.html'), 500
+
+
+  new_show = Show(start_time=request.form['start_time'],
+                  venue_id=request.form['venue_id'],
+                  artist_id=request.form['artist_id']
+                  )
+
+  db.session.add(new_show)
+  db.session.commit()
+
 
   # on successful db insert, flash success
   flash('Show was successfully listed!')
