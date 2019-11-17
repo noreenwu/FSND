@@ -187,6 +187,14 @@ def num_upcoming_shows(shows):
 
   return len(upcoming_shows)
 
+#----------------------------------------------------------------------------#
+#  Given a Search Term, Return a Lower Case Version, Enclosed with %
+#----------------------------------------------------------------------------#
+def get_term(term):    
+  term_lower = term.lower()
+  term_lower = '%' + term_lower + '%'
+  return term_lower
+
 
 #----------------------------------------------------------------------------#
 # Controllers.
@@ -244,14 +252,34 @@ def search_venues():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
+
+  search_term = get_term(request.form['search_term'])
+
+  venue_matches = Venue.query.filter(Venue.name.ilike(search_term)).all() 
+
+  data = []
+  
+  for v in (venue_matches):
+    v_obj = {
+      'id': v.id,
+      'name': v.name,
+      'num_upcoming_shows': num_upcoming_shows(v.shows)
+    }
+    data.append(v_obj)
+
   response={
-    "count": 1,
-    "data": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
+    'count': len(venue_matches),
+    'data': data
   }
+
+  # response={
+  #   "count": 1,
+  #   "data": [{
+  #     "id": 2,
+  #     "name": "The Dueling Pianos Bar",
+  #     "num_upcoming_shows": 0,
+  #   }]
+  # }
   return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/venues/<int:venue_id>')
@@ -424,13 +452,12 @@ def search_artists():
   # search for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
 
-  search_term = request.form['search_term']
-  search_term_lower = search_term.lower()
+  search_term = get_term(request.form['search_term'])
 
-  search_term_lower = '%' + search_term_lower + '%'
-  artist_matches = Artist.query.filter(Artist.name.ilike(search_term_lower)).all()
+  artist_matches = Artist.query.filter(Artist.name.ilike(search_term)).all()
+
   data = []
-  count = len(artist_matches)
+
   for a in artist_matches:
      a_obj = {
        'id': a.id,
@@ -440,7 +467,7 @@ def search_artists():
      data.append(a_obj)
   
   response={
-     'count': count,
+     'count': len(artist_matches),
      'data': data
   }
   # response={
