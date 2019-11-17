@@ -125,6 +125,23 @@ def get_show_data(show_ary):
 
   return data
 
+#----------------------------------------------------------------------------#
+#  Sort a Shows Array into Past and Upcoming Shows
+#----------------------------------------------------------------------------#
+def sort_shows(shows):
+  present = datetime.now()
+
+  upcoming_shows =[]
+  past_shows = []
+
+  for s in shows:
+    if s.start_time > present:
+        upcoming_shows.append(s)
+    else:
+        past_shows.append(s)  
+
+  return past_shows, upcoming_shows        
+
 
 #----------------------------------------------------------------------------#
 # Controllers.
@@ -367,16 +384,7 @@ def show_artist(artist_id):
     'image_link': the_artist.image_link,
   }
 
-  artist_shows = the_artist.shows
-  upcoming_shows = []
-  past_shows = []
-  present = datetime.now()
-
-  for s in artist_shows:
-    if s.start_time > present:
-        upcoming_shows.append(s)
-    else:
-        past_shows.append(s)
+  past_shows, upcoming_shows = sort_shows(the_artist.shows)
 
   data['past_shows'] = get_show_data(past_shows)
   data['upcoming_shows'] = get_show_data(upcoming_shows)
