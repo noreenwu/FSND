@@ -58,7 +58,7 @@ class Venue(db.Model):
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     website = db.Column(db.String(120))   # new
-    seeking_talent = db.Column(db.String(120))  # new
+    seeking_talent = db.Column(db.Boolean)  # new
     seeking_description = db.Column(db.String(120)) # new 
     location_id = db.Column(db.Integer, db.ForeignKey('Location.location_id'))
     shows = db.relationship('Show', backref=db.backref('venue', lazy=True))
@@ -78,7 +78,7 @@ class Artist(db.Model):
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     website = db.Column(db.String(120))   # new
-    seeking_venue = db.Column(db.String(120)) # new
+    seeking_venue = db.Column(db.Boolean) # new
     seeking_description = db.Column(db.String(120))  # new
     shows = db.relationship('Show', backref=db.backref('artist'), lazy=True)
     genres = db.relationship('Genre', secondary='artist_genre', backref=db.backref('artists'), lazy=True)
@@ -186,7 +186,6 @@ artist1 = Artist(name="Guns N Petals",
 )
 
 artist2 = Artist(name="Matt Quevedo",
-                 id=5,
                  city="New York",
                  state="NY",
                  phone="300-400-5000",
@@ -442,6 +441,31 @@ venue_music_coffee = Venue.query.filter_by(name="Park Square Live Music & Coffee
 if venue_music_coffee is not None:
     venue_music_coffee.genres = [ genre_rock, genre_jazz, genre_classical, genre_folk ]
 
+
+
+db.session.commit()
+
+
+
+# add genres to Artists
+
+artist_petals = Artist.query.filter_by(name="Guns N Petals").first()
+
+if artist_petals is not None:
+    artist_petals.genres.append(genre_rock)
+
+
+artist_matt = Artist.query.filter_by(name="Matt Quevedo").first()
+
+if artist_matt is not None:
+    artist_matt.genres.append(genre_jazz)
+
+
+artist_sax = Artist.query.filter_by(name="The Wild Sax Band").first()
+    
+if artist_sax is not None:
+    artist_sax.genres.append(genre_jazz)
+    artist_sax.genres.append(genre_classical)
 
 
 db.session.commit()

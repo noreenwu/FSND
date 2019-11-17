@@ -67,7 +67,7 @@ class Venue(db.Model):
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     website = db.Column(db.String(120))   # new
-    seeking_talent = db.Column(db.String(120))  # new
+    seeking_talent = db.Column(db.Boolean)  # new
     seeking_description = db.Column(db.String(120)) # new 
     location_id = db.Column(db.Integer, db.ForeignKey('Location.location_id'))
     shows = db.relationship('Show', backref=db.backref('venue', lazy=True))
@@ -86,7 +86,7 @@ class Artist(db.Model):
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     website = db.Column(db.String(120))   # new
-    seeking_venue = db.Column(db.String(120)) # new
+    seeking_venue = db.Column(db.Boolean) # new
     seeking_description = db.Column(db.String(120))  # new
     shows = db.relationship('Show', backref=db.backref('artist'), lazy=True)
     genres = db.relationship('Genre', secondary=artist_genre, backref=db.backref('artists'), lazy=True)
@@ -411,7 +411,7 @@ def artists():
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-  # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
+  # search for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
   response={
     "count": 1,
@@ -439,6 +439,7 @@ def show_artist(artist_id):
     'website': the_artist.website,
     'facebook_link': the_artist.facebook_link,
     'seeking_venue': the_artist.seeking_venue,
+    'seeking_description': the_artist.seeking_description,
     'image_link': the_artist.image_link,
   }
 
@@ -449,6 +450,9 @@ def show_artist(artist_id):
 
   data['past_shows_count'] = len(past_shows)
   data['upcoming_shows_count'] = len(upcoming_shows)
+
+  genre_names = map(lambda x: x.name, the_artist.genres)
+  data['genres'] = list(genre_names)
 
   # data['upcoming_shows'] =[]
   # for ps in past_shows:
