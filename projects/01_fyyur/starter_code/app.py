@@ -408,6 +408,35 @@ def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
 
+  genres = request.form['genres']
+
+  location = Location.query.filter_by(city=request.form['city'], state=request.form['state'] ).first()
+
+  new_venue = Venue(name = request.form['name'],
+                    city = request.form['city'],
+                    state = request.form['state'],
+                    address = request.form['address'],
+                    phone = request.form['phone'],
+                    image_link = 'https://unsplash.com/photos/MTO5SmPraX4'                    
+  )
+  db.session.add(new_venue)
+  db.session.commit()
+
+  if location is None:
+    # insert new location into db
+    new_location = Location(city=request.form['city'],
+                            state=request.form['state'],
+                            venues=[ new_venue ] 
+    )
+    db.session.add(new_Location)
+  else:
+    # location exists, just update venues
+    location.venues.append(new_venue)
+
+  db.session.commit()    
+
+  logging.warning('from venue entry form, genres: ', genres)
+
   # on successful db insert, flash success
   flash('Venue ' + request.form['name'] + ' was successfully listed!')
   # TODO: on unsuccessful db insert, flash an error instead.
