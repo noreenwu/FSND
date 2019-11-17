@@ -195,6 +195,24 @@ def get_term(term):
   term_lower = '%' + term_lower + '%'
   return term_lower
 
+#----------------------------------------------------------------------------#
+#  Given List of Genre Names from Form, Return Corresponding Genre Objects from DB
+#----------------------------------------------------------------------------#
+def get_genre_from_db(genre_list):
+  g_list = []
+
+  for gen in genre_list:
+    genre_obj = Genre.query.filter_by(name=gen).first()
+    if genre_obj is None:
+      # add to db
+      new_genre_obj = Genre(name=gen)
+      db.session.add(new_genre_obj)
+      db.session.commit()
+      g_list.append(new_genre_obj)
+    else:
+      g_list.append(genre_obj)
+
+  return g_list
 
 #----------------------------------------------------------------------------#
 # Controllers.
@@ -408,34 +426,40 @@ def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
 
-  genres = request.form['genres']
+  genres = get_genre_from_db(request.form.getlist('genres'))
+
+  logging.warning("select multiple ", genres)
 
   location = Location.query.filter_by(city=request.form['city'], state=request.form['state'] ).first()
 
+      
   new_venue = Venue(name = request.form['name'],
                     city = request.form['city'],
                     state = request.form['state'],
                     address = request.form['address'],
                     phone = request.form['phone'],
-                    image_link = 'https://unsplash.com/photos/MTO5SmPraX4'                    
+                    #image_link = 'https://unsplash.com/photos/MTO5SmPraX4'
+                    image_link = 'http://westsideparentsource.org/open/oleg-kuzmin-kTA1roYnTjY-unsplash.jpg',
+                    genres = genres
   )
   db.session.add(new_venue)
   db.session.commit()
 
   if location is None:
     # insert new location into db
+    logging.warning("location is None, creating new one")
     new_location = Location(city=request.form['city'],
                             state=request.form['state'],
                             venues=[ new_venue ] 
     )
-    db.session.add(new_Location)
+
+    db.session.add(new_location)
   else:
     # location exists, just update venues
     location.venues.append(new_venue)
 
   db.session.commit()    
 
-  logging.warning('from venue entry form, genres: ', genres)
 
   # on successful db insert, flash success
   flash('Venue ' + request.form['name'] + ' was successfully listed!')
