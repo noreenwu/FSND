@@ -108,6 +108,24 @@ def format_datetime(value, format='medium'):
 
 app.jinja_env.filters['datetime'] = format_datetime
 
+
+#----------------------------------------------------------------------------#
+#  Get Show Data
+#----------------------------------------------------------------------------#
+def get_show_data(show_ary):
+  data = []
+
+  for cs in show_ary:
+     cs_obj = { 'venue_id': cs.venue_id,
+                'venue_name': cs.venue.name,
+                'venue_image_link': cs.venue.image_link,
+                'start_time': cs.start_time.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+              }
+     data.append(cs_obj)
+
+  return data
+
+
 #----------------------------------------------------------------------------#
 # Controllers.
 #----------------------------------------------------------------------------#
@@ -115,6 +133,7 @@ app.jinja_env.filters['datetime'] = format_datetime
 @app.route('/')
 def index():
   return render_template('pages/home.html')
+
 
 
 #  Venues
@@ -359,28 +378,23 @@ def show_artist(artist_id):
     else:
         past_shows.append(s)
 
-  data['past_shows'] = past_shows
-
-
-  data['upcoming_shows'] = []  
-  for cs in upcoming_shows:
-     cs_obj = { 'venue_id': cs.venue_id,
-                'venue_name': cs.venue.name,
-                'venue_image_link': cs.venue.image_link,
-                'start_time': cs.start_time.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-              }
-     data['upcoming_shows'].append(cs_obj)
+  data['past_shows'] = get_show_data(past_shows)
+  data['upcoming_shows'] = get_show_data(upcoming_shows)
 
   data['past_shows_count'] = len(past_shows)
   data['upcoming_shows_count'] = len(upcoming_shows)
 
   # data['upcoming_shows'] =[]
-  data['past_shows'] = [{
-      "venue_id": 1,
-      "venue_name": "The Musical Hop",
-      "venue_image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
-      "start_time": "2019-05-21T21:30:00.000Z"
-  }]
+  # for ps in past_shows:
+  #    ps_obj = { 'venue_id '
+
+  #    }
+  # data['past_shows'] = [{
+  #     "venue_id": 1,
+  #     "venue_name": "The Musical Hop",
+  #     "venue_image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
+  #     "start_time": "2019-05-21T21:30:00.000Z"
+  # }]
 
   # data1={
   #   "id": 16,
