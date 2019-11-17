@@ -30,6 +30,23 @@ migrate = Migrate(app, db)
 #----------------------------------------------------------------------------#
 # Models.
 #----------------------------------------------------------------------------#
+artist_genre = db.Table('artist_genre',
+     db.Column('genre_id', db.Integer, db.ForeignKey('Genre.id')),
+     db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'))
+)
+
+venue_genre = db.Table('venue_genre',
+     db.Column('genre_id', db.Integer, db.ForeignKey('Genre.id')),
+     db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'))
+)
+
+class Genre(db.Model):
+    __tablename__ = 'Genre'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20))
+    # backref artists
+    # backref venues
+
 class Location(db.Model):
     __tablename__ = 'Location'
     location_id = db.Column(db.Integer, primary_key=True)
@@ -54,8 +71,8 @@ class Venue(db.Model):
     seeking_description = db.Column(db.String(120)) # new 
     location_id = db.Column(db.Integer, db.ForeignKey('Location.location_id'))
     shows = db.relationship('Show', backref=db.backref('venue', lazy=True))
+    genres = db.relationship('Genre', secondary=venue_genre, backref=db.backref('venues'), lazy=True)
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -65,13 +82,14 @@ class Artist(db.Model):
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
+    # genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     website = db.Column(db.String(120))   # new
     seeking_venue = db.Column(db.String(120)) # new
     seeking_description = db.Column(db.String(120))  # new
     shows = db.relationship('Show', backref=db.backref('artist'), lazy=True)
+    genres = db.relationship('Genre', secondary=artist_genre, backref=db.backref('artists'), lazy=True)
 
     def __repr__(self):
         return f'<Artist {self.id}, {self.name}>'
@@ -253,6 +271,9 @@ def show_venue(venue_id):
 
   data['upcoming_shows_count'] = len(upcoming_shows)
   data['past_shows_count'] = len(past_shows)
+
+  genre_names = map(lambda x: x.name, the_venue.genres)
+  data['genres'] = list(genre_names)
 
   # data1={
   #   "id": 1,
