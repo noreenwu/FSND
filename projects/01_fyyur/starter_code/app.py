@@ -110,15 +110,32 @@ app.jinja_env.filters['datetime'] = format_datetime
 
 
 #----------------------------------------------------------------------------#
-#  Get Show Data
+#  Get Show Data for Artist Page
 #----------------------------------------------------------------------------#
-def get_show_data(show_ary):
+def get_artist_show_data(show_ary):
   data = []
 
   for cs in show_ary:
      cs_obj = { 'venue_id': cs.venue_id,
                 'venue_name': cs.venue.name,
                 'venue_image_link': cs.venue.image_link,
+                'start_time': cs.start_time.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+              }
+     data.append(cs_obj)
+
+  return data
+
+
+#----------------------------------------------------------------------------#
+#  Get Show Data for Venue Page
+#----------------------------------------------------------------------------#
+def get_venue_show_data(show_ary):
+  data = []
+
+  for cs in show_ary:
+     cs_obj = { 'artist_id': cs.artist_id,
+                'artist_name': cs.artist.name,
+                'artist_image_link': cs.artist.image_link,
                 'start_time': cs.start_time.strftime("%Y-%m-%dT%H:%M:%S.000Z")
               }
      data.append(cs_obj)
@@ -214,8 +231,28 @@ def show_venue(venue_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
 
-  data = Venue.query.filter_by(id=venue_id).first()
+  the_venue = Venue.query.filter_by(id=venue_id).first()
 
+  past_shows, upcoming_shows = sort_shows(the_venue.shows)
+
+  data = {
+     'id': the_venue.id,
+     'name': the_venue.name,
+     'address': the_venue.address,
+     'city': the_venue.city,
+     'state': the_venue.state,
+     'phone': the_venue.phone,
+     'website': the_venue.website,
+     'facebook_link': the_venue.facebook_link,
+     'seeking_talent': the_venue.seeking_talent,
+     'seeking_description': the_venue.seeking_description,
+     'image_link': the_venue.image_link
+  }
+
+  data['upcoming_shows'] = get_venue_show_data(upcoming_shows)
+
+  data['upcoming_shows_count'] = len(upcoming_shows)
+  data['past_shows_count'] = len(past_shows)
 
   # data1={
   #   "id": 1,
@@ -386,8 +423,8 @@ def show_artist(artist_id):
 
   past_shows, upcoming_shows = sort_shows(the_artist.shows)
 
-  data['past_shows'] = get_show_data(past_shows)
-  data['upcoming_shows'] = get_show_data(upcoming_shows)
+  data['past_shows'] = get_artist_show_data(past_shows)
+  data['upcoming_shows'] = get_artist_show_data(upcoming_shows)
 
   data['past_shows_count'] = len(past_shows)
   data['upcoming_shows_count'] = len(upcoming_shows)
