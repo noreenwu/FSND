@@ -215,6 +215,16 @@ def get_genre_from_db(genre_list):
   return g_list
 
 #----------------------------------------------------------------------------#
+#  Given List of Genre Objects, Return Corresponding Genre Names
+#----------------------------------------------------------------------------#
+def get_genre_names(genre_list):
+  genre_name_list = []
+  for g in genre_list:
+    genre_name_list.append(g.name)
+
+  return genre_name_list  
+
+#----------------------------------------------------------------------------#
 # Controllers.
 #----------------------------------------------------------------------------#
 
@@ -698,12 +708,16 @@ def edit_venue(venue_id):
   # }
   # TODO: populate form with values from venue with ID <venue_id>
 
+  genre_names = get_genre_names(venue.genres)
+  logging.warning("venue form genre names ", genre_names)
+
   form.name.data = venue.name
   form.city.data = venue.city
   form.state.data = venue.state
   form.address.data = venue.address
   form.phone.data = venue.phone
   form.facebook_link.data = venue.facebook_link
+  form.genres.data = genre_names
 
   return render_template('forms/edit_venue.html', form=form, venue=venue)
 
