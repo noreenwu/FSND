@@ -71,7 +71,7 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean)  # new
     seeking_description = db.Column(db.String(120)) # new 
     location_id = db.Column(db.Integer, db.ForeignKey('Location.location_id'))
-    shows = db.relationship('Show', backref=db.backref('venue', lazy=True))
+    shows = db.relationship('Show', cascade="all,delete", backref=db.backref('venue', lazy=True))
     genres = db.relationship('Genre', secondary=venue_genre, backref=db.backref('venues'), lazy=True)
 
 
@@ -133,6 +133,8 @@ app.jinja_env.filters['datetime'] = format_datetime
 #----------------------------------------------------------------------------#
 def get_artist_show_data(show_ary):
   data = []
+  logging.warning("show ary is empty", len(show_ary))
+
 
   for cs in show_ary:
      cs_obj = { 'venue_id': cs.venue_id,
@@ -291,8 +293,10 @@ def venues():
                     'venues' : get_venue_data(l.venues)
                   })
   
+  if len(data) == 0:
+    flash ('There are no venues to display.')
 
-  return render_template('pages/venues.html', areas=data);
+  return render_template('pages/venues.html', areas=data)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
@@ -488,14 +492,44 @@ def create_venue_submission():
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
   return render_template('pages/home.html')
 
-@app.route('/venues/<venue_id>', methods=['DELETE'])
+
+@app.route('/venues/<int:venue_id>/delete', methods=['GET'])
+def del_venue(venue_id):
+  form = VenueForm()
+  the_venue = Venue.query.filter_by(id=venue_id).first()
+
+
+  venue = {
+    'id': the_venue.id,
+    'name': the_venue.name,
+    'city': the_venue.city,
+    'state': the_venue.state,
+    'address': the_venue.address,    
+    'phone': the_venue.phone,
+    'website': the_venue.website,
+    'facebook_link': the_venue.facebook_link,
+    'genres': get_genre_names(the_venue.genres),
+    'image_link': the_venue.image_link,
+    'seeking_talent': the_venue.seeking_talent
+  }
+
+  return render_template('forms/delete_venue.html', form=form, venue=venue)
+
+
+#@app.route('/venues/<venue_id>', methods=['DELETE'])
+@app.route('/venues/<venue_id>/delete', methods=['POST'])
 def delete_venue(venue_id):
   # TODO: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
 
+  the_venue = Venue.query.filter_by(id=venue_id).first()
+  logging.warning("this is the delete function")
+  db.session.delete(the_venue)
+  db.session.commit()
+
   # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
   # clicking that button delete it from the db then redirect the user to the homepage
-  return None
+  return render_template('pages/home.html')
 
 #  Artists
 #  ----------------------------------------------------------------
@@ -505,18 +539,9 @@ def artists():
   artists = Artist.query.all()
   data = []
   for a in artists:
-      data.append({'id': a.id, 'name': a.name})
+      data.append({'id': a.id, 
+                   'name': a.name})
 
-  # data=[{
-  #   "id": 4,
-  #   "name": "Guns N Petals",
-  # }, {
-  #   "id": 5,
-  #   "name": "Matt Quevedo",
-  # }, {
-  #   "id": 6,
-  #   "name": "The Wild Sax Band",
-  # }]
   return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
@@ -647,6 +672,8 @@ def edit_venue_submission(venue_id):
   # TODO: take values from the form submitted, and update existing
   # venue record with ID <venue_id> using the new attributes
 
+
+  logging.warning("venue edit all the values from the form", request.form)
   the_venue = Venue.query.filter_by(id=venue_id).first()
 
   genres_from_db = get_genre_from_db(request.form.getlist('genres'))
@@ -756,11 +783,12 @@ def create_show_submission():
     db.session.commit()
   except exc.SQLAlchemyError:
     flash('Uh oh -- something went wrong. Show was not listed')
+    return render_template('pages/home.html')
 
   # on successful db insert, flash success
   flash('Show was successfully listed!')
-
   return render_template('pages/home.html')
+
 
 @app.errorhandler(404)
 def not_found_error(error):
