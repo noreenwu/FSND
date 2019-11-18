@@ -719,6 +719,18 @@ def edit_artist_submission(artist_id):
   # TODO: take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
 
+  the_artist = Artist.query.filter_by(id=artist_id).first()
+  genres_from_db = get_genre_from_db(request.form.getlist('genres'))
+
+  the_artist.name = request.form['name']
+  the_artist.city = request.form['city']
+  the_artist.state = request.form['state']
+  the_artist.phone = request.form['phone']
+  the_artist.genres = get_genre_from_db(request.form.getlist('genres'))
+  the_artist.facebook_link = request.form['facebook_link']
+
+  db.session.commit()
+
   return redirect(url_for('show_artist', artist_id=artist_id))
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
@@ -763,7 +775,6 @@ def edit_venue_submission(venue_id):
 
   the_venue = Venue.query.filter_by(id=venue_id).first()
 
-  # update_location(the_venue.id, the_venue.city, the_venue.state, request.form['city'], request.form['state'])
   genres_from_db = get_genre_from_db(request.form.getlist('genres'))
 
   the_venue.location_id = get_location_id(venue_id, the_venue.city, the_venue.state, request.form['city'], request.form['state'])
