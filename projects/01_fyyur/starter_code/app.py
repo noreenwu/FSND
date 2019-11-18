@@ -345,7 +345,7 @@ def show_venue(venue_id):
 
   data['upcoming_shows'] = get_venue_show_data(upcoming_shows)
   data['past_shows'] = get_venue_show_data(past_shows)
-  
+
   data['upcoming_shows_count'] = len(upcoming_shows)
   data['past_shows_count'] = len(past_shows)
 
@@ -821,7 +821,7 @@ def shows():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
 
-  the_shows = Show.query.all()
+  the_shows = Show.query.order_by(Show.start_time).all()
   data = []
   for s in the_shows:
       ss = {}
