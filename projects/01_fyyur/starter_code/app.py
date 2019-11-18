@@ -510,7 +510,8 @@ def del_venue(venue_id):
     'facebook_link': the_venue.facebook_link,
     'genres': get_genre_names(the_venue.genres),
     'image_link': the_venue.image_link,
-    'seeking_talent': the_venue.seeking_talent
+    'seeking_talent': the_venue.seeking_talent,
+    'seeking_description': the_venue.seeking_description
   }
 
   return render_template('forms/delete_venue.html', form=form, venue=venue)
@@ -542,6 +543,8 @@ def artists():
       data.append({'id': a.id, 
                    'name': a.name})
 
+  if len(data) == 0:
+    flash ('There are no artists to display.')
   return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
@@ -748,6 +751,8 @@ def shows():
               data.append(ss)
 
 
+  if len(data) == 0:
+    flash ('There are no shows to display.')
   return render_template('pages/shows.html', shows=data)
 
 @app.route('/shows/create')
