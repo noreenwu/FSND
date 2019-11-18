@@ -225,6 +225,30 @@ def get_genre_names(genre_list):
   return genre_name_list  
 
 #----------------------------------------------------------------------------#
+# Return Location ID, depending on whether city or state has changed
+#----------------------------------------------------------------------------#
+def get_location_id(venue_id, old_city, old_state, new_city, new_state):
+  
+  if (old_city != new_city) or (old_state != new_state):
+    # find or create a new location id
+    new_location = Location.query.filter_by(city=new_city, state=new_state).first()
+
+    if new_location is None:
+        # create new location first, then get id
+        new_location = Location(city=new_city, state=new_state)
+        db.session.add(new_location)
+        db.session.commit()
+        new_location = Location.query.filter_by(city=new_city, state=new_state).first()
+
+    return new_location.location_id
+
+  else:
+    same_location = Location.query.filter_by(city=old_city, state=old_state).first()
+    logging.warning('same location was ', old_city, old_state)
+    return same_location.location_id
+
+
+#----------------------------------------------------------------------------#
 # Controllers.
 #----------------------------------------------------------------------------#
 
@@ -246,10 +270,11 @@ def venues():
   locations = Location.query.all()
 
   for l in locations:
-    data.append({ 'city' : l.city, 
-                  'state' : l.state,
-                  'venues' : l.venues
-                })
+    if len(l.venues) > 0:                     # don't display locations with no venues
+      data.append({ 'city' : l.city, 
+                    'state' : l.state,
+                    'venues' : l.venues
+                  })
   
 
   # data=[{
@@ -725,6 +750,22 @@ def edit_venue(venue_id):
 def edit_venue_submission(venue_id):
   # TODO: take values from the form submitted, and update existing
   # venue record with ID <venue_id> using the new attributes
+
+  the_venue = Venue.query.filter_by(id=venue_id).first()
+
+  # update_location(the_venue.id, the_venue.city, the_venue.state, request.form['city'], request.form['state'])
+  genres_from_db = get_genre_from_db(request.form.getlist('genres'))
+
+  the_venue.location_id = get_location_id(venue_id, the_venue.city, the_venue.state, request.form['city'], request.form['state'])
+  the_venue.name = request.form['name']
+  the_venue.city = request.form['city']
+  the_venue.state = request.form['state']
+  the_venue.address = request.form['address']
+  the_venue.phone = request.form['phone']
+  the_venue.facebook_link = request.form['facebook_link']
+  the_venue.genres = genres_from_db
+
+  db.session.commit()
   return redirect(url_for('show_venue', venue_id=venue_id))
 
 #  Create Artist
