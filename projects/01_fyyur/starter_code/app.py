@@ -249,6 +249,23 @@ def get_location_id(venue_id, old_city, old_state, new_city, new_state):
 
 
 #----------------------------------------------------------------------------#
+# Get Venue Data for Venue Listing Display
+#----------------------------------------------------------------------------#
+def get_venue_data(venues):
+
+  venues_extract_list = []
+
+  for v in venues:
+    v_obj = { 'id': v.id,
+              'name': v.name,
+              'num_upcoming_shows': num_upcoming_shows(v.shows)
+            }
+    venues_extract_list.append(v_obj)
+
+  logging.warning("venue extract", venues_extract_list)
+  return venues_extract_list
+
+#----------------------------------------------------------------------------#
 # Controllers.
 #----------------------------------------------------------------------------#
 
@@ -263,9 +280,6 @@ def index():
 
 @app.route('/venues')
 def venues():
-  # TODO: replace with real venues data.
-  #       num_shows should be aggregated based on number of upcoming shows per venue.
-
   data = []
   locations = Location.query.all()
 
@@ -273,38 +287,17 @@ def venues():
     if len(l.venues) > 0:                     # don't display locations with no venues
       data.append({ 'city' : l.city, 
                     'state' : l.state,
-                    'venues' : l.venues
+                    'venues' : get_venue_data(l.venues)
                   })
   
 
-  # data=[{
-  #   "city": "San Francisco",
-  #   "state": "CA",
-  #   "venues": [{
-  #     "id": 1,
-  #     "name": "The Musical Hop",
-  #     "num_upcoming_shows": 0,
-  #   }, {
-  #     "id": 3,
-  #     "name": "Park Square Live Music & Coffee",
-  #     "num_upcoming_shows": 1,
-  #   }]
-  # }, {
-  #   "city": "New York",
-  #   "state": "NY",
-  #   "venues": [{
-  #     "id": 2,
-  #     "name": "The Dueling Pianos Bar",
-  #     "num_upcoming_shows": 0,
-  #   }]
-  # }]
   return render_template('pages/venues.html', areas=data);
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-  # seach for Hop should return "The Musical Hop".
-  # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
+  # case-insensitive search on database for artists with partial string search. 
+  # searching for Hop yields "The Musical Hop".
+  # searching for "Music" yields "The Musical Hop" and "Park Square Live Music & Coffee"
 
   search_term = get_term(request.form['search_term'])
 
@@ -325,20 +318,12 @@ def search_venues():
     'data': data
   }
 
-  # response={
-  #   "count": 1,
-  #   "data": [{
-  #     "id": 2,
-  #     "name": "The Dueling Pianos Bar",
-  #     "num_upcoming_shows": 0,
-  #   }]
-  # }
+
   return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
-  # TODO: replace with real venue data from the venues table, using venue_id
 
   the_venue = Venue.query.filter_by(id=venue_id).first()
 
@@ -359,7 +344,8 @@ def show_venue(venue_id):
   }
 
   data['upcoming_shows'] = get_venue_show_data(upcoming_shows)
-
+  data['past_shows'] = get_venue_show_data(past_shows)
+  
   data['upcoming_shows_count'] = len(upcoming_shows)
   data['past_shows_count'] = len(past_shows)
 
