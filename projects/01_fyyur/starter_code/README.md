@@ -38,7 +38,7 @@ Relationships:
 
 In addition to enforcing data integrity through the use of constraints defined in the schema
 (such as nullable=False and unique=True, and use of primary and foreign keys), identifying the one-to-many and
-many-to-many relationships was key driver in structuring the data. 
+many-to-many relationships was a key driver in structuring the data. 
 
 In the case of one-to-one and one-to-many relationships, foreign keys were utilized (one Location has many Venues)
 and in the case of many-to-many, a secondary table was defined, establishing 2 one-to-many relationships
