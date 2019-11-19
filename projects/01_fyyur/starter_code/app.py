@@ -49,8 +49,6 @@ app.jinja_env.filters['datetime'] = format_datetime
 #----------------------------------------------------------------------------#
 def get_artist_show_data(show_ary):
   data = []
-  logging.warning("show ary is empty", len(show_ary))
-
 
   for cs in show_ary:
      cs_obj = { 'venue_id': cs.venue_id,
@@ -163,7 +161,6 @@ def get_location_id(venue_id, old_city, old_state, new_city, new_state):
 
   else:
     same_location = Location.query.filter_by(city=old_city, state=old_state).first()
-    logging.warning('same location was ', old_city, old_state)
     return same_location.location_id
 
 
@@ -181,7 +178,6 @@ def get_venue_data(venues):
             }
     venues_extract_list.append(v_obj)
 
-  logging.warning("venue extract", venues_extract_list)
   return venues_extract_list
 
 #----------------------------------------------------------------------------#
@@ -370,7 +366,6 @@ def del_venue(venue_id):
 def delete_venue(venue_id):
 
   the_venue = Venue.query.filter_by(id=venue_id).first()
-  logging.warning("this is the delete function")
   db.session.delete(the_venue)
 
 
@@ -504,9 +499,7 @@ def edit_venue(venue_id):
   form = VenueForm()
 
   venue = Venue.query.filter_by(id=venue_id).first()
-
   genre_names = get_genre_names(venue.genres)
-  logging.warning("venue form genre names ", genre_names)
 
   form.name.data = venue.name
   form.city.data = venue.city
