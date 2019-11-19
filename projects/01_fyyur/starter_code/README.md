@@ -61,10 +61,11 @@ Error handling:
 
 Where possible, SQLAlchemy exceptions are caught, such that failures to insert a record, whether due
 to user error or database inavailability, result in a graceful exit. Examples include:
+
     1) not providing a valid artist ID or venue ID when adding a show
     2) adding an artist or a venue using a name that already exists
     3) failure to delete a venue
-    
+
 
 ## Required Files
 
