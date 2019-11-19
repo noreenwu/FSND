@@ -44,15 +44,15 @@ venue_genre = db.Table('venue_genre',
 class Genre(db.Model):
     __tablename__ = 'Genre'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
+    name = db.Column(db.String(20), nullable=False)
     # backref artists
     # backref venues
 
 class Location(db.Model):
     __tablename__ = 'Location'
     location_id = db.Column(db.Integer, primary_key=True)
-    city = db.Column(db.String(20))
-    state = db.Column(db.String(20))
+    city = db.Column(db.String(20), nullable=False)
+    state = db.Column(db.String(20), nullable=False)
     venues = db.relationship('Venue', backref=db.backref('location'), lazy=True)
 
 
@@ -60,9 +60,9 @@ class Venue(db.Model):
     __tablename__ = 'Venue'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
+    name = db.Column(db.String, nullable=False, unique=True)
+    city = db.Column(db.String(120), nullable=False)
+    state = db.Column(db.String(120), nullable=False)
     address = db.Column(db.String(120))
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
@@ -79,9 +79,9 @@ class Artist(db.Model):
     __tablename__ = 'Artist'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
+    name = db.Column(db.String, nullable=False, unique=True)
+    city = db.Column(db.String(120), nullable=False)
+    state = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120))
     # genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
@@ -106,7 +106,7 @@ class Artist(db.Model):
 class Show(db.Model):
     __tablename__ = 'Show'
     show_id = db.Column(db.Integer, primary_key=True)    
-    start_time = db.Column('start_time', db.DateTime)
+    start_time = db.Column('start_time', db.DateTime, nullable=False)
     artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
     venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'))
     # backref artist 
@@ -388,7 +388,12 @@ def create_venue_submission():
                     genres = genres
   )
   db.session.add(new_venue)
-  db.session.commit()
+
+  try:
+    db.session.commit()
+  except exc.SQLAlchemyError:
+    flash('Uh oh -- something went wrong. Venue ' + request.form['name'] + ' was not created.')
+    return render_template('pages/home.html')
 
   if location is None:
     # insert new location into db
@@ -686,6 +691,13 @@ def create_shows():
 def create_show_submission():
   # called to create new shows in the db, upon submitting new show listing form
 
+  try:
+      int(request.form['artist_id'])
+      int(request.form['venue_id'])
+  except:
+      flash("Please use a valid artist ID and venue ID when posting a new show.")
+      return render_template('pages/home.html')
+
 
   artist = Artist.query.filter_by(id=request.form['artist_id']).first()
   venue = Venue.query.filter_by(id=request.form['venue_id']).first()
@@ -708,7 +720,7 @@ def create_show_submission():
   try:
     db.session.commit()
   except exc.SQLAlchemyError:
-    flash('Uh oh -- something went wrong. Show was not listed')
+    flash('Uh oh -- something went wrong. Show was not listed. Try again.')
     return render_template('pages/home.html')
 
   # on successful db insert, flash success
