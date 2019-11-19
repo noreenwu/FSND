@@ -16,15 +16,14 @@ from forms import *
 from sqlalchemy import Boolean
 from datetime import datetime
 
-# from app import Venue, Show, Artist, venue_genre, artist_genre
+
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
 
 app = Flask(__name__)
 moment = Moment(app)
-#app.config.from_object('config')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://noreen@localhost:5432/fyyur'
+app.config.from_object('config')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -251,13 +250,7 @@ if musical_hop is not None:
     musical_hop.shows.append(show_hop)
 
 ven_music_and_coffee = Venue.query.filter_by(name="Park Square Live Music & Coffee").first()
-# show_mc = Show(start_time="2019-06-15T23:00:00.000Z")
-# show_mc2 = Show(start_time="2035-04-01T20:00:00.000Z")  
-# show_mc3 = Show(start_time="2035-04-08T20:00:00.000Z")
-# show_mc4 = Show(start_time="2035-04-15T20:00:00.000Z")
 
-# db.session.add(show_mc)
-# db.session.add(show_mc2)
 
 if ven_music_and_coffee is not None:
     ven_music_and_coffee.shows.append(show_sax2019)
