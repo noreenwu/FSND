@@ -166,20 +166,6 @@ if locationNY is not None:
 db.session.commit()
 
 
-
-
-
-##  Artist <-> Venue  (many-to-many: 1 artist can have many venues; 1 venue can have many artists)
-##  Artist -> Show   (one-to-many:  1 artist can have many shows; 1 show can have 1 artist)
-##  Artist <-> Genre (many-to-many: 1 artist can have many genres: 1 genres can have many artists)
-
-##  Venue -> Show (one-to-many: 1 venue can have many shows; 1 show can have 1 venue)
-##  Venue <-> Genre (many-to-many: 1 venue can have many genres; 1 genre can have many venues)
-
-##  Location -> Venue (one-to-many: 1 location can have many venues; 1 venue can have 1 location)
-
-
-
 # # delete Shows
 
 shows = Show.query.all()
