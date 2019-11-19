@@ -248,6 +248,10 @@ def show_venue(venue_id):
 
   the_venue = Venue.query.filter_by(id=venue_id).first()
 
+  if the_venue is None:
+    flash("No venue with that ID.")
+    return render_template('pages/home.html')
+
   past_shows, upcoming_shows = sort_shows(the_venue.shows)
 
   data = {
@@ -427,6 +431,10 @@ def show_artist(artist_id):
   # shows the artist page with the given artist_id
 
   the_artist = Artist.query.filter_by(id=artist_id).first()
+
+  if the_artist is None:
+    flash("No artist with that ID.")
+    return render_template('pages/home.html')
 
   data = {
     'id': the_artist.id,
