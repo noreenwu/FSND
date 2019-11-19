@@ -19,11 +19,17 @@ The following must be installed in order for the app to run:
 
     Python3
 
-Once the dependencies are available, run the following:
+Once the dependencies are available, cd into the working directory and run the following:
 
-    $ export FLASK_APP=myapp
-    $ export FLASK_ENV=development # enables debug mode
-    $ python3 app.py
+    $ createdb fyyur         # creates Postgres db for this app
+    $ flask db init          # creates directory structure for migrations
+    $ flask db migrate       # looks for changes in the schema -- the whole schema, on the first run
+    $ flask db upgrade       # applies schema changes to the database
+    $ python3 fyyur_load.py  # loads some initial data into the database 
+    $ python3 app.py         # runs the Fyyur app on localhost:5000 (view with browser)
+
+
+If fyyur_load is not loaded, then the app will run with no initial data.
 
 
 ## Implementation Notes
